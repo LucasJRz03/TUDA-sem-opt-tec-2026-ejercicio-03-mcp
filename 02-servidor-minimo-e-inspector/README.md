@@ -49,7 +49,14 @@ Construir el servidor MCP más pequeño posible y probarlo con MCP Inspector. En
 
 ## Respuesta
 ```
-El Inspector valida automáticamente en el frontend basándose en el JSON Schema generado por las anotaciones de tipo. Esto impide que se envíen valores inválidos al servidor, demostrando que el contrato de tipos se respeta en ambas capas (cliente y servidor). Para probar el manejo de errores del servidor, se requeriría al parecer un cliente que omita la validación o modificar temporalmente las anotaciones de tipo.
+- El Inspector permite validar el servidor MCP de forma aislada, verificando que las tools estén correctamente definidas, que el JSON Schema se genere automáticamente desde las anotaciones de tipo, y que los errores se manejen de forma estructurada. Esto evita que los problemas se mezclen con el comportamiento impredecible de un LLM (alucinaciones, reintentos automáticos, formateo incorrecto de argumentos), actuando como una capa de pruebas unitarias antes de integrar el agente.
+- Por ende, se eliminó la validación manual isinstance porque el SDK de MCP ya valida los tipos automáticamente gracias a las anotaciones int. Esto hace el código más limpio y "pythonico" para MCP.
+- Una tool debe tener: 
+1. Un nombre claro y accionable que describa su función.
+2. Una descripción que explique qué hace y cuándo debe usarse.
+3. Anotaciones de tipo estrictas en los parámetros y el valor de retorno, que el SDK traduce a JSON Schema para que el modelo sepa exactamente qué formato de datos proporcionar.
+4. Opcionalmente, descripciones explícitas en cada parámetro si el nombre por sí solo no es autoexplicativo. Con esta información, el modelo puede invocar la herramienta correctamente sin necesidad de 'adivinar' los tipos o el propósito
+
 ``` 
 
 ## Capturas
@@ -78,4 +85,8 @@ El Inspector valida automáticamente en el frontend basándose en el JSON Schema
 
 <p align="center">
  <img src="images/respuesta-exitosa.png" width="600" alt="resultado es 5">
+</p>
+
+<p align="center">
+   <img src="images/res-invalida.png" width="900" alt="Invalid resquest parameters">
 </p>
