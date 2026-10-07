@@ -1,5 +1,4 @@
 """Servidor base para experimentar tools y esquemas generados por el SDK."""
-
 from mcp.server import MCPServer
 
 mcp = MCPServer("Laboratorio MCP mínimo")
@@ -14,8 +13,8 @@ def health() -> dict[str, str]:
 @mcp.tool()
 def add(a:int, b:int) -> int:
     """Suma dos números enteros."""
-    if not isinstance(a, int) or not isinstance(b, int):
-        return {"error": "Ambos parámetros deben ser números enteros."}
+    # El SDK de MCP ya valida los tipos según las anotaciones antes de llamar a la función.
+    # Si se desea validación defensiva, se lanza una excepción para respetar el contrato "-> int".
     return a + b
 
 
