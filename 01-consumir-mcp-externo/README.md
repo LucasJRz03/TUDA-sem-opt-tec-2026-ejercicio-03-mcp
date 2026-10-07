@@ -49,3 +49,26 @@ Un registro breve con el prompt usado, qué capacidad se invocó y una aclaraci�
 
 - ¿Por qué el modelo no se conecta directamente con el sitio de documentación?
 - ¿Qué diferencia hay entre que una tool esté disponible y que sea apropiado usarla?
+
+-----------------
+
+### Prompt usado
+
+```bash
+¿Cómo se configura la conexión de PostgreSQL en Django según la documentación actual?
+```
+
+### Decisión del modelo
+En el bloque `Thought:...`, el modelo razonó que la pregunta necesitaba documentación actualizada y decidió usar el servidor remoto de `context7`.
+
+### La ejecución por el host
+OpenCode invocó las tools en orden:
+   - `context7_resolve-library-id` (obtuvo `/websites/djangoproject_en_6_1`).
+   - `context7_quey-docs` (consultó los parámetros de `DATABASES` y `psycopg`).
+
+### Su respuesta final
+El modelo procesó ese contexto inyectado y redactó la solución estructura.
+
+## Respuestas a las preguntas
+- Porque los LLM no tienen conexión a red ni navegador web integrado; necesitan que un host intermediario ejecute herramientas seguras en su lugar.
+- Que una tool esté listada no implica que deba usarse siempre, el modelo decide invocarla solo si la tarea requiere información externa o una acción especifica que supera sus conocimientos estáticos.
