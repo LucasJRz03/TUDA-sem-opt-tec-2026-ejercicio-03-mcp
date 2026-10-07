@@ -55,13 +55,27 @@ El Inspector valida automáticamente en el frontend basándose en el JSON Schema
 ## Capturas
 ------------------------------
 #### Sin conexión:
-[imagen sin conexion](images/desconectado.png)
+
+<p align="center">
+ <img src="images/desconectado.png" width="1000" alt="desconectado">
+</p>
 
 ### Conectado:
-[imagen conexion](images/conectado.png)
+
+<p align="center">
+ <img src="images/conectado.png" width="1000" alt="conectado">
+</p>
 
 ### Mensajes
-[imagen servidor activo](images/mensaje-json.png)
 
-[imagen suma 2 más 3 exitosa](images/valores-validos.png)
-[imagen respuesta 5 de la suma](images/respuesta-exitosa.png)
+<p align="center">
+ <img src="images/mensaje-json.png" width="600" alt="mensaje de conexión">
+</p>
+
+<p align="center">
+ <img src="images/valores-validos.png" width="600" alt="suma 2 más 3">
+</p>
+
+<p align="center">
+ <img src="images/respuesta-exitosa.png" width="600" alt="resultado es 5">
+</p>
