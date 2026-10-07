@@ -187,3 +187,73 @@ objetos que dependan del ORM.
 ## Entrega mínima
 
 Un servidor MCP conectado a Django con las cinco capacidades (dos resources, dos tools, un prompt), una explicación de por qué cada una es resource, tool o prompt, y una demostración en Inspector de al menos catálogo, búsqueda, inscripción y el prompt guiado.
+
+## Justificación de diseño
+  - `activities://available` y `activities://{id}` (Resources): Se implementaron como Resources porque representan contexto legible (datos). El LLM los consulta para obtener información del estado actual del sistema sin modificarlo, similar a leer un archivo o una URL.
+
+  - `search_activities` y `register_for_activity` (Tools): Se implementaron como Tools porque representan acciones. La búsqueda requiere parámetros dinámicos que el LLM decide en tiempo de ejecución, y la inscripción es una operación con efectos secundarios (cambia la base de datos) que requiere una invocación explícita y validación de parámetros.
+  - `guia_inscripcion` (Prompt): Se implementó como Prompt porque no ejecuta lógica de negocio ni llama al servicio directamente. Su función es orquestar: devuelve un conjunto de mensajes predefinidos que le enseñan al LLM el orden correcto de usar los Resources y Tools anteriores (leer catálogo → buscar → ver detalle → pedir confirmación → inscribir), garantizando un flujo de usuario seguro y controlado.
+
+## Capturas de las etapas
+
+A continuación, algunas capturas del funcionamiento del servidor MCP con Django y el flujo guiado de inscripción:
+
+### catalogo
+
+<p align="center">
+  <img src="images/catalo-actividades.png" width="900" alt="Catálogo de actividades disponibles en el cliente MCP">
+</p>
+
+### detalle de actividad
+
+<p align="center">
+  <img src="images/detalle-actividad-1.png" width="900" alt="Detalle de una actividad seleccionada">
+</p>
+
+### buscar actividad
+
+<p align="center">
+  <img src="images/search-actividades.png" width="900" alt="Búsqueda de actividades por texto en el inspector">
+</p>
+
+### resultado de la busquedad
+
+<p align="center">
+  <img src="images/resultado-search.png" width="900" alt="Resultado de la búsqueda de actividades por texto en el inspector">
+</p>
+
+## registro de la actividad
+
+<p align="center">
+  <img src="images/reigister-for-activity.png" width="900" alt="Registro de una actividad por texto en el inspector">
+</p>
+
+### resultado del registro 
+
+<p align="center">
+  <img src="images/resultado-register-activity.png" width="900" alt="Resultado de la inscripción exitosa">
+</p>
+
+### flujo guiado
+
+<p align="center">
+  <img src="images/guia-inscripcion.png" width="900" alt="Prompt guiado de inscripción">
+</p>
+
+<p align="center">
+  <img src="images/flujo-guiado-input.png" width="900" alt="Prompt guiado de inscripción según los datos ingresados">
+</p>
+
+<p align="center">
+  <img src="images/resultado-1.png" width="900" alt="Resultado del Prompt de inscripción">
+</p>
+
+<p align="center">
+  <img src="images/resultados.png" width="900" alt="info Prompt de inscripción">
+</p>
+
+
+
+
+
+
