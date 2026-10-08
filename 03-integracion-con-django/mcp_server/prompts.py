@@ -42,16 +42,15 @@ def register_prompts(mcp: MCPServer) -> None:
                 f"2. Usá la tool `search_activities` con `query=\"{query}\"` y `only_available=True` para afinar la búsqueda"
                 + (" según el interés del estudiante." if query else " (si no hay tema, mostrá todo el catálogo)."),
                 "3. Cuando el estudiante elija una candidata, leé el resource template `activities://{activity_id}` con su ID para mostrarle título, descripción y cupos.",
-                "4. Antes de inscribir, pedí confirmación explícita ('¿Confirmás la inscripción a X?')"
-                + (
-                    f" El email ya conocido es {student_email}, confirmalo igual."
-                    if student_email
-                    else " y pedí el `student_email` si todavía no lo tenés (es obligatorio para inscribir)."
-                ),
-                "5. Recién con confirmación + email, llamá a la tool `register_for_activity` con `activity_id` y `student_email`.",
-                "6. Comunicá el resultado de forma clara: si es `registered`, celebralo con el ID; si es `activity_full`, `already_registered`, `invalid_email` o `activity_not_found`, explicá qué pasó y ofrecé alternativas del catálogo.",
+                "4. Pedí el `student_email` si todavía no lo tenés (es obligatorio) y la confirmación explícita del estudiante ('¿Confirmás la inscripción a X?')"
+                + (f" El email ya conocido es {student_email}, confirmalo igual." if student_email else ""),
+                "5. Con email + confirmación del estudiante, llamá a la tool `request_registration_confirmation` con `activity_id` y `student_email`. Eso NO inscribe: sólo emite un `confirmation_id` de un solo uso que vence en 10 minutos.",
+                "6. Mostrá al usuario el resumen que devuelve ese paso (actividad, email y `confirmation_id`) y esperá su permiso explícito. No sigas sin esa aprobación humana.",
+                "7. Recién tras el permiso, llamá a la tool `register_for_activity` pasando únicamente ese `confirmation_id`. Nunca lo inventes ni lo reutilices: es de un solo uso.",
+                "8. Comunicá el resultado de forma clara: si es `registered`, celebralo con el ID; si es `activity_full`, `already_registered`, `invalid_email` o `activity_not_found`, explicá qué pasó y ofrecé alternativas del catálogo.",
+                "9. Si la tool responde `confirmation_required`, `invalid_confirmation` o `confirmation_expired`, no inscribas: volvé al paso 5 para pedir un token nuevo y repetí la aprobación.",
                 "",
-                "Importante: vos no inscribís por tu cuenta, sólo orquestás estos resources y tools. No inventes actividades ni IDs.",
+                "Importante: vos no inscribís por tu cuenta, sólo orquestás estos resources y tools. El único camino a la inscripción es request_registration_confirmation → aprobación humana → register_for_activity con el token. No inventes actividades, IDs ni confirmation_id.",
             ]
         )
         return [

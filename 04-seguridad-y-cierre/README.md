@@ -59,3 +59,54 @@ También deberías poder explicar por qué REST y MCP pueden convivir: REST atie
 ## Extensión opcional: HTTP remoto
 
 Cuando el servidor deje de ser local, el transporte puede ser Streamable HTTP. Antes de publicarlo, definí autenticación, límites de tasa, logs y trazas. Este despliegue no forma parte del mínimo del laboratorio.
+
+
+### Pasos de ejecución:
+
+1. Levantar el servidor desde `04-seguridad-y-cierre`
+```bash
+1 uv sync
+2 uv run mcp dev server.py
+```
+
+2. Probar el flujo de seguridad de 2 pasos (Human-in-the-loop)
+El modelo no puede inscribir a nadie directamente, necesita un token que solo el servidor puede generar.
+  **Paso A:** Pedir la confirmación.
+      - Ve a la pestaña tools y ejecuta `request_registration_confirmation`:
+    <p align="center">
+      <img src="images/tools-request-registration.png" width="900" alt="Búsqueda de actividades por texto en el inspector">
+    </p>
+      - con los siguientes datos:
+    <p align="center">
+      <img src="images/ejecucion-usuario.png" width="900" alt="Búsqueda de actividades por texto en el inspector">
+    </p>
+      - Resultado:
+    <p align="center">
+     <img src="images/resultado-esperado.png" width="900" alt="Búsqueda de actividades por texto en el inspector">
+    </p>
+  **Paso B:** Ejecutar la inscripción con el token.
+      - Ejecuta la tool `register for_activity` con:
+    <p align="center">
+     <img src="images/token-valido.png" width="900" alt="Búsqueda de actividades por texto en el inspector">
+    </p>    
+      - resultado:
+    <p align="center">
+     <img src="images/resultado-valido.png" width="900" alt="Búsqueda de actividades por texto en el inspector">
+    </p>
+  **Paso C:** Probar la seguridad
+    - Vuelve a ejecutar `register_for_activity` con los mismos datos, pero inventa un `confirmation_id`.
+    <p align="center">
+     <img src="images/token-falso.png" width="900" alt="Búsqueda de actividades por texto en el inspector">
+    </p>
+      - resultado: 
+    <p align="center">
+     <img src="images/resultado-invalido.png" width="900" alt="Búsqueda de actividades por texto en el inspector">
+    </p>
+
+*Nota: Si usas el token verdadero por 2da vez, también fallará, el token es de un solo uso.*
+
+## Cierre
+1. El Flujo de Inscripción Segura:
+El usuario pide inscribirse. El LLM no llama directamente a la tool de escritura. Primero, invoca `request_registration_confirmation`. El servidor valida los datos en el borde, genera un token opaco de un solo uso (TTL 10 min) y lo devuelve. El Host (la interfaz) le muestra este resumen al humano y le pide aprobación explícita. Solo cuando el humano acepta, el LLM llama a `register_for_activity` pasando ese `confirmation_id` exacto. El servidor valida el token, lo consume (garantizando idempotencia) y ejecuta el dominio. Si el LLM intenta inventar un token o reusarlo, el servidor rechaza la operación con un error accionable, sin filtrar trazas internas."
+2. Por qué REST y MCP conviven:
+"No se reemplazan, se complementan. REST es para clientes de software tradicionales (frontend, mobile) que siguen contratos de API fijos y predecibles (JSON). MCP, en cambio, expone capacidades descubribles (Resources, Tools, Prompts) para un host agéntico. MCP delega la orquestación y la toma de decisiones al LLM, pero mantiene la seguridad y la validación estricta en el servidor, actuando como una capa de adaptación segura sobre el mismo dominio de negocio."
